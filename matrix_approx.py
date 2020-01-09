@@ -64,6 +64,8 @@ class SVDMatrix(torch.nn.modules.module.Module):
         self.all_params.append(self.singular_values)
         self.H1_stack = []
         self.H2_stack = []
+        self.u_list = []
+        self.v_list = []
 
         Pu = torch.eye(n)
         Pv = torch.eye(n)
@@ -71,8 +73,16 @@ class SVDMatrix(torch.nn.modules.module.Module):
         for i in range(1, n + 1):
             ui = Parameter(torch.Tensor(n + 1 - i))
             self.all_params.append(ui)
+            self.u_list.append(ui)
+
             vi = Parameter(torch.Tensor(i))
             self.all_params.append(vi)
+            self.v_list.append(vi)
+
+        # give meaningfull values to the parameters to prevent nan
+        self.reset_parameters()
+
+        for ui, vi in zip(self.u_list, self.v_list):
 
             Hu_i = hh_matix(n, ui)
             Hv_i = hh_matix(n, vi)
@@ -84,8 +94,6 @@ class SVDMatrix(torch.nn.modules.module.Module):
 
         # this is the final matrix (M_{1,1} from Theorem 2 in the paper)
         self.matrix = Pu@torch.diag(self.singular_values)@Pv
-
-        self.reset_parameters()
 
     def reset_parameters(self):
         for param_tensor in self.all_params:
