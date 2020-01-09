@@ -20,5 +20,6 @@ class TestHHMatrix(unittest.TestCase):
         u = torch.rand(3)
 
         hh = ma.hh_matix(n, u)
-        self.assertEqual(hh, hh.T)
-        self.assertEqual(hh@hh, torch.eye(n))
+        self.assertTrue(torch.all(hh == hh.T))
+        self.assertTrue(torch.allclose(hh@hh, torch.eye(n), atol=1e-6))
+

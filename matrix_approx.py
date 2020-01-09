@@ -36,7 +36,7 @@ def hh_matix(n, u):
 
     m = n-k
 
-    I[m:, m:] -= 2 * u.reshape(-1, 1)@u.reshape(1, -1)/u@u
+    I[m:, m:] -= 2 * u.reshape(-1, 1)@u.reshape(1, -1)/(u@u)
 
     return I
 
